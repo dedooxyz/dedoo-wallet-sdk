@@ -1,0 +1,47 @@
+{
+  "name": "dedoo-sdk",
+  "version": "0.1.0",
+  "description": "TypeScript client for the Dedoo Extension Wallet dapp provider (window.dedoo) — multichain aware.",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dedooxyz/dedoo-wallet-sdk.git"
+  },
+  "homepage": "https://github.com/dedooxyz/dedoo-wallet-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/dedooxyz/dedoo-wallet-sdk/issues"
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "dedoo",
+    "wallet",
+    "junkcoin",
+    "wojakcoin",
+    "multichain",
+    "bitcoin",
+    "utxo",
+    "dapp"
+  ],
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.3"
+  }
+}
