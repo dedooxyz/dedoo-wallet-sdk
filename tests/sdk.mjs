@@ -400,6 +400,39 @@ await checkAsync('sendBitcoin chains createTx into sendTx', async () => {
   assert.ok(provider.calls.some((c) => c.method === 'sendTx'), 'sendTx must be called');
 });
 
+await checkAsync('sendWithOpReturn hands off to a wallet that broadcasts itself', async () => {
+  const seen = [];
+  const provider = {
+    isDedoo: true,
+    async sendWithOpReturn(to, satoshis, payload, options) {
+      seen.push({ to, satoshis, payload, options });
+      return 'b'.repeat(64); // bare txid, the way the Wojak extension answers
+    },
+    async createTx() {
+      throw new Error('the SDK must not build when the wallet can send');
+    },
+  };
+  const client = sdk.createDedooClient(provider);
+  const txid = await client.sendWithOpReturn('Waddr', 1000, 'ab'.repeat(20), {
+    feeRate: 7,
+    payloadIsHex: true,
+  });
+  assert.strictEqual(txid, 'b'.repeat(64), 'a bare txid must pass straight through');
+  assert.deepStrictEqual(seen, [
+    { to: 'Waddr', satoshis: 1000, payload: 'ab'.repeat(20), options: { feeRate: 7 } },
+  ], 'the positional contract the ecosystem probes for must be used');
+});
+
+await checkAsync('sendWithOpReturn builds itself when the wallet cannot broadcast', async () => {
+  const provider = dedooProvider();
+  provider.sendWithOpReturn = async () => {
+    throw new Error('a text payload must not take the native path');
+  };
+  const client = sdk.createDedooClient(provider);
+  const txid = await client.sendWithOpReturn('Waddr', 1000, 'hello', {});
+  assert.strictEqual(txid, 'a'.repeat(64), 'falls back to createTx + sendTx');
+});
+
 await checkAsync('sendWithOpReturn forwards the payload and validates it', async () => {
   const provider = dedooProvider();
   const client = sdk.createDedooClient(provider);

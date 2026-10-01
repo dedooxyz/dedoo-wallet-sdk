@@ -1,4 +1,4 @@
-/*! dedoo-sdk v0.1.0 */
+/*! dedoo-wallet-sdk v0.1.0 */
 
 // src/client.ts
 var MAX_OP_RETURN_BYTES = 80;
@@ -179,6 +179,16 @@ function createDedooClient(provider, options = {}) {
     async sendWithOpReturn(toAddress, satoshis, payload, sendOptions = {}) {
       const payloadIsHex = sendOptions.payloadIsHex === true;
       assertOpReturn(payload, payloadIsHex);
+      const native = provider.sendWithOpReturn;
+      if (payloadIsHex && typeof native === "function") {
+        const txid = await call(provider, "sendWithOpReturn", [
+          toAddress,
+          satoshis,
+          payload,
+          { feeRate: sendOptions.feeRate }
+        ]);
+        return unwrap(txid, "txid");
+      }
       const hex = await client.createTx({
         to: toAddress,
         amount: satoshis,

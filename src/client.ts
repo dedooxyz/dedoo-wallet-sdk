@@ -382,6 +382,24 @@ export function createDedooClient(provider: AnyProvider, options: DedooClientOpt
     async sendWithOpReturn(toAddress, satoshis, payload, sendOptions: any = {}) {
       const payloadIsHex = sendOptions.payloadIsHex === true;
       assertOpReturn(payload, payloadIsHex);
+
+      // A wallet that broadcasts an OP_RETURN send itself does it in one
+      // approval, and the page never reaches the chain endpoint — which is
+      // cross-origin and answers without CORS headers, so a page that
+      // broadcasts is told it failed even when the node accepted the
+      // transaction. The positional call matches the contract `wojak-sdk`
+      // probes for, so one wallet serves both SDKs.
+      const native = (provider as any).sendWithOpReturn;
+      if (payloadIsHex && typeof native === 'function') {
+        const txid = await call(provider, 'sendWithOpReturn', [
+          toAddress,
+          satoshis,
+          payload,
+          { feeRate: sendOptions.feeRate },
+        ]);
+        return unwrap(txid, 'txid');
+      }
+
       const hex = await client.createTx({
         to: toAddress,
         amount: satoshis,
