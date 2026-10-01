@@ -1,4 +1,4 @@
-# dedoo-sdk
+# dedoo-wallet-sdk
 
 TypeScript client for the **Dedoo Extension Wallet** dapp provider (`window.dedoo`), multichain aware.
 
@@ -16,7 +16,7 @@ npm install github:dedooxyz/dedoo-wallet-sdk
 ## Quick start
 
 ```ts
-import { initDedoo } from 'dedoo-sdk';
+import { initDedoo } from 'dedoo-wallet-sdk';
 
 const dedoo = await initDedoo();          // waits for the provider to inject
 const address = await dedoo.connect();    // opens the wallet's approval prompt
@@ -26,7 +26,7 @@ const txid = await dedoo.sendBitcoin(address, 10_000);
 Detection is explicit when you would rather not wait:
 
 ```ts
-import { detectProvider, getAllProviders, createDedooClient } from 'dedoo-sdk';
+import { detectProvider, getAllProviders, createDedooClient } from 'dedoo-wallet-sdk';
 
 const detected = detectProvider();                 // { provider, brand } | undefined
 const all = getAllProviders();                     // every injected wallet
@@ -88,4 +88,4 @@ package's own version.
 
 ## License
 
-Not yet specified.
+MIT — see [LICENSE](LICENSE).

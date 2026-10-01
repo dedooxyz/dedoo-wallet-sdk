@@ -1,7 +1,8 @@
 {
-  "name": "dedoo-sdk",
+  "name": "dedoo-wallet-sdk",
   "version": "0.1.0",
   "description": "TypeScript client for the Dedoo Extension Wallet dapp provider (window.dedoo) — multichain aware.",
+  "license": "MIT",
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",
@@ -27,6 +28,7 @@
   },
   "scripts": {
     "build": "node build.mjs",
+    "test": "node tests/sdk.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "prepublishOnly": "npm run build"
   },
